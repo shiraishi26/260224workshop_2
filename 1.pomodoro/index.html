@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍅 ポモドーロタイマー</h1>
+            <button class="settings-btn" id="settingsBtn" aria-label="設定を開く">⚙️</button>
+        </header>
+
+        <div class="timer-display">
+            <div class="mode-indicator" id="modeIndicator">作業時間</div>
+            <div class="time" id="timeDisplay">25:00</div>
+            <div class="progress-ring">
+                <svg width="300" height="300">
+                    <circle cx="150" cy="150" r="140" class="progress-ring-circle-bg"></circle>
+                    <circle cx="150" cy="150" r="140" class="progress-ring-circle" id="progressCircle"></circle>
+                </svg>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="startBtn">開始</button>
+            <button class="btn btn-secondary" id="pauseBtn" disabled>一時停止</button>
+            <button class="btn btn-secondary" id="resetBtn">リセット</button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">完了したポモドーロ</span>
+                <span class="stat-value" id="completedPomodoros">0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ 設定</h2>
+                <button class="close-btn" id="closeBtn" aria-label="閉じる">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- ポモドーロ時間設定 -->
+                <div class="setting-group">
+                    <label class="setting-label">⏱️ ポモドーロ時間</label>
+                    <div class="option-buttons">
+                        <button class="option-btn" data-time="15">15分</button>
+                        <button class="option-btn active" data-time="25">25分</button>
+                        <button class="option-btn" data-time="35">35分</button>
+                        <button class="option-btn" data-time="45">45分</button>
+                    </div>
+                </div>
+
+                <!-- 休憩時間設定 -->
+                <div class="setting-group">
+                    <label class="setting-label">☕ 休憩時間</label>
+                    <div class="option-buttons">
+                        <button class="option-btn active" data-break="5">5分</button>
+                        <button class="option-btn" data-break="10">10分</button>
+                        <button class="option-btn" data-break="15">15分</button>
+                    </div>
+                </div>
+
+                <!-- テーマ設定 -->
+                <div class="setting-group">
+                    <label class="setting-label">🎨 テーマ</label>
+                    <div class="option-buttons">
+                        <button class="option-btn active" data-theme="light">ライト</button>
+                        <button class="option-btn" data-theme="dark">ダーク</button>
+                        <button class="option-btn" data-theme="focus">フォーカス</button>
+                    </div>
+                </div>
+
+                <!-- サウンド設定 -->
+                <div class="setting-group">
+                    <label class="setting-label">🔊 サウンド設定</label>
+                    <div class="sound-settings">
+                        <div class="sound-option">
+                            <label class="switch">
+                                <input type="checkbox" id="startSoundToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>開始音</span>
+                        </div>
+                        <div class="sound-option">
+                            <label class="switch">
+                                <input type="checkbox" id="endSoundToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>終了音</span>
+                        </div>
+                        <div class="sound-option">
+                            <label class="switch">
+                                <input type="checkbox" id="tickSoundToggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span>tick音</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveSettingsBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

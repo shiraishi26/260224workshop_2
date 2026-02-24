@@ -25,3 +25,4 @@ Thumbs.db
 
 # Flask
 instance/
+user_data.json

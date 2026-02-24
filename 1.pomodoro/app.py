@@ -7,6 +7,7 @@ from flask import Flask, render_template, request, jsonify
 from datetime import datetime, timedelta
 import json
 import os
+import fcntl
 from pathlib import Path
 
 app = Flask(__name__)
@@ -76,16 +77,31 @@ BADGES = {
 }
 
 def load_user_data():
-    """ユーザーデータをロード"""
+    """ユーザーデータをロード（ファイルロック付き）"""
     if DATA_FILE.exists():
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
+            # 読み込み時は共有ロック
+            try:
+                fcntl.flock(f.fileno(), fcntl.LOCK_SH)
+                data = json.load(f)
+                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                return data
+            except:
+                fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+                raise
     return DEFAULT_USER_DATA.copy()
 
 def save_user_data(data):
-    """ユーザーデータを保存"""
+    """ユーザーデータを保存（ファイルロック付き）"""
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+        # 書き込み時は排他ロック
+        try:
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+            json.dump(data, f, ensure_ascii=False, indent=2)
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+        except:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+            raise
 
 def calculate_level(xp):
     """XPからレベルを計算（100XPごとにレベルアップ）"""
@@ -285,9 +301,14 @@ def complete_pomodoro():
 
 @app.route('/api/reset-data', methods=['POST'])
 def reset_data():
-    """データをリセット（開発/テスト用）"""
+    """データをリセット（開発/テスト用のみ）"""
+    # 開発環境でのみ有効化
+    if not os.getenv('FLASK_DEBUG', 'False').lower() == 'true':
+        return jsonify({'success': False, 'error': 'This endpoint is only available in debug mode'}), 403
     save_user_data(DEFAULT_USER_DATA.copy())
     return jsonify({'success': True})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # 環境変数でdebugモードを制御（本番環境では必ずFalseにする）
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, host='0.0.0.0', port=5000)

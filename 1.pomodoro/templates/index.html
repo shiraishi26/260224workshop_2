@@ -663,8 +663,8 @@
             `;
         }
 
-        // 5秒ごとに統計を自動更新
-        setInterval(loadStats, 5000);
+        // 30秒ごとに統計を自動更新（サーバー負荷を軽減）
+        setInterval(loadStats, 30000);
     </script>
 </body>
 </html>

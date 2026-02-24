@@ -157,7 +157,7 @@ class PomodoroTimer {
             this.timeLeft--;
             
             // tick音を再生
-            if (this.settings.sounds.tick && this.timeLeft % 1 === 0) {
+            if (this.settings.sounds.tick) {
                 this.playSound('tick');
             }
             
@@ -346,14 +346,14 @@ class PomodoroTimer {
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('ポモドーロタイマー', {
                 body: message,
-                icon: '/1.pomodoro/pomodoro.png'
+                icon: './pomodoro.png'
             });
         } else if ('Notification' in window && Notification.permission !== 'denied') {
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
                     new Notification('ポモドーロタイマー', {
                         body: message,
-                        icon: '/1.pomodoro/pomodoro.png'
+                        icon: './pomodoro.png'
                     });
                 }
             });

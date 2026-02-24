@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+</head>
+<body>
+    <h1>Pomodoro Timer</h1>
+    <div id="timer">25:00</div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="stopTimer()">Stop</button>
+    <button onclick="resetTimer()">Reset</button>
+
+    <form id="settings-form">
+        <h2>Settings</h2>
+        <label for="work_time">Work Time (minutes):</label>
+        <input type="number" id="work_time" name="work_time" value="25">
+        <br>
+        <label for="short_break">Short Break (minutes):</label>
+        <input type="number" id="short_break" name="short_break" value="5">
+        <br>
+        <label for="long_break">Long Break (minutes):</label>
+        <input type="number" id="long_break" name="long_break" value="15">
+        <br>
+        <label for="cycles">Cycles:</label>
+        <input type="number" id="cycles" name="cycles" value="4">
+        <br>
+        <button type="button" onclick="saveSettings()">Save Settings</button>
+    </form>
+
+    <link rel="stylesheet" href="/static/css/styles.css">
+
+    <script>
+        let timerInterval;
+
+        function startTimer() {
+            fetch('/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ time: 25 * 60 })
+            });
+            // Start countdown logic here
+        }
+
+        function stopTimer() {
+            fetch('/stop', { method: 'POST' });
+            // Stop countdown logic here
+        }
+
+        function resetTimer() {
+            fetch('/reset', { method: 'POST' });
+            // Reset countdown logic here
+        }
+
+        function saveSettings() {
+            const form = document.getElementById('settings-form');
+            const data = {
+                work_time: form.work_time.value,
+                short_break: form.short_break.value,
+                long_break: form.long_break.value,
+                cycles: form.cycles.value
+            };
+
+            fetch('/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => alert('Settings saved!'));
+        }
+    </script>
+</body>
+</html>

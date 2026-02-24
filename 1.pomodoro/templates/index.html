@@ -663,8 +663,17 @@
             `;
         }
 
-        // 30秒ごとに統計を自動更新（サーバー負荷を軽減）
-        setInterval(loadStats, 30000);
+        // タブが非表示の場合はポーリングを停止して、サーバー負荷を軽減
+        let statsInterval = setInterval(loadStats, 30000);
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(statsInterval);
+            } else {
+                loadStats();
+                statsInterval = setInterval(loadStats, 30000);
+            }
+        });
     </script>
 </body>
 </html>

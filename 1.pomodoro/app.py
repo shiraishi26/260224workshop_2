@@ -86,7 +86,7 @@ def load_user_data():
                 data = json.load(f)
                 fcntl.flock(f.fileno(), fcntl.LOCK_UN)
                 return data
-            except:
+            except Exception as e:
                 fcntl.flock(f.fileno(), fcntl.LOCK_UN)
                 raise
     return DEFAULT_USER_DATA.copy()
@@ -99,7 +99,7 @@ def save_user_data(data):
             fcntl.flock(f.fileno(), fcntl.LOCK_EX)
             json.dump(data, f, ensure_ascii=False, indent=2)
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
-        except:
+        except Exception as e:
             fcntl.flock(f.fileno(), fcntl.LOCK_UN)
             raise
 
@@ -302,8 +302,9 @@ def complete_pomodoro():
 @app.route('/api/reset-data', methods=['POST'])
 def reset_data():
     """データをリセット（開発/テスト用のみ）"""
-    # 開発環境でのみ有効化
-    if not os.getenv('FLASK_DEBUG', 'False').lower() == 'true':
+    # 開発環境でのみ有効化（大文字小文字を考慮）
+    debug_enabled = os.getenv('FLASK_DEBUG', 'false').lower() in ('true', '1', 'yes')
+    if not debug_enabled:
         return jsonify({'success': False, 'error': 'This endpoint is only available in debug mode'}), 403
     save_user_data(DEFAULT_USER_DATA.copy())
     return jsonify({'success': True})

@@ -22,14 +22,22 @@ const particlesContainer = document.getElementById('particles-container');
 const rippleContainer = document.getElementById('ripple-container');
 
 // Progress circle calculations
-const radius = progressCircle.r.baseVal.value;
-const circumference = 2 * Math.PI * radius;
-progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-progressCircle.style.strokeDashoffset = 0;
+let radius = progressCircle.r.baseVal.value;
+let circumference = 2 * Math.PI * radius;
+
+function updateCircleMetrics() {
+    radius = progressCircle.r.baseVal.value;
+    circumference = 2 * Math.PI * radius;
+    progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+    updateProgressBar();
+}
 
 // Initialize
+updateCircleMetrics();
 updateDisplay();
-updateProgressBar();
+
+// Handle window resize for responsive behavior
+window.addEventListener('resize', updateCircleMetrics);
 
 // Event Listeners
 startBtn.addEventListener('click', startTimer);
